@@ -1,55 +1,15 @@
 import ImageDog from "@/app/assets/dog.webp";
+import { Navbar } from "@/components/navbar";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Heart, PawPrint, Search } from "lucide-react";
+import { Heart } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
 export default function Home() {
   return (
     <main className="min-h-screen bg-white">
-      <nav className="border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center">
-              <Link href="/" className="flex items-center space-x-2">
-                <PawPrint className="h-8 w-8 text-blue-600" />
-              </Link>
-              <div className="hidden md:block ml-10">
-                <div className="flex items-baseline space-x-4">
-                  <Link href="/" className="text-blue-600 font-medium">
-                    Home
-                  </Link>
-                  <Link
-                    href="/quero-adotar"
-                    className="text-gray-600 hover:text-gray-900"
-                  >
-                    Quero adotar
-                  </Link>
-                  <Link
-                    href="/faq"
-                    className="text-gray-600 hover:text-gray-900"
-                  >
-                    FAQ
-                  </Link>
-                </div>
-              </div>
-            </div>
-            <div className="flex items-center space-x-4">
-              <div className="relative">
-                <input
-                  type="text"
-                  placeholder="Pesquise algo aqui..."
-                  className="w-64 pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-                <Search className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
-              </div>
-              <Button className="bg-blue-600 text-white">Clique aqui</Button>
-              <Button variant="ghost">Dwight</Button>
-            </div>
-          </div>
-        </div>
-      </nav>
+      <Navbar />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
         <nav className="flex" aria-label="Breadcrumb">
           <ol className="flex items-center space-x-2">
@@ -63,6 +23,7 @@ export default function Home() {
           </ol>
         </nav>
       </div>
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="bg-amber-50 rounded-lg p-6 mb-8">
           <h1 className="text-2xl font-semibold text-amber-800 mb-4">
