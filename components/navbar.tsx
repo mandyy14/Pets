@@ -1,5 +1,13 @@
 import { Button } from "@/components/ui/button";
-import { PawPrint, Search } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { CircleUser, PawPrint, Search } from "lucide-react";
 import Link from "next/link";
 
 export function Navbar() {
@@ -13,7 +21,7 @@ export function Navbar() {
             </Link>
             <div className="hidden md:block ml-10">
               <div className="flex items-baseline space-x-4">
-                <Link href="/" className="text-blue-600 font-medium">
+                <Link href="/" className="text-gray-600 hover:text-gray-900">
                   Home
                 </Link>
                 <Link
@@ -28,8 +36,9 @@ export function Navbar() {
               </div>
             </div>
           </div>
+
           <div className="flex items-center space-x-4">
-            <div className="relative">
+            <div className="relative hidden sm:block">
               <input
                 type="text"
                 placeholder="Pesquise algo aqui..."
@@ -37,8 +46,30 @@ export function Navbar() {
               />
               <Search className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
             </div>
-            <Button className="bg-blue-600 text-white">Clique aqui</Button>
-            <Button variant="ghost">Dwight</Button>
+
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="rounded-full"
+                >
+                  <CircleUser className="h-5 w-5" />
+                  <span className="sr-only">Abrir menu do usuário</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuLabel>Minha Conta</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem className="cursor-pointer" asChild>
+                  <Link href="/login">Fazer login</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem className="cursor-pointer" asChild>
+                  <Link href="/cadastro">Cadastrar</Link>
+                </DropdownMenuItem>
+                {/* TODO: adicionar perfil, sair, etc */}
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
       </div>
