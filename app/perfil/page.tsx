@@ -80,50 +80,74 @@ function ProfilePictureUpload() {
 
         setIsUploading(true);
         setUploadError(null);
+        let fileIdentifier: string | null = null;
         console.log("Iniciando upload para usuário ID:", user.id);
 
         const formData = new FormData();
-        // 'profilePicture' deve ser o nome esperado pelo backend para o @RequestParam MultipartFile
-        formData.append('profilePicture', selectedFile);
+        formData.append('file', selectedFile);
 
         try {
-            // !!! ATENÇÃO: Endpoint de backend INEXISTENTE ainda !!!
-            // Trocar a URL pelo endpoint correto (via Gateway idealmente) quando ele for criado
-            const response = await fetch(`http://localhost:8083/api/users/${user.id}/profile-picture`, {
+            console.log("Enviando para media-service...");
+            const mediaResponse = await fetch('http://localhost:8084/api/media/upload/profile-picture', {
                  method: 'POST',
-                 // NÃO definir Content-Type para FormData, o browser faz isso com o boundary correto
-                 // TODO: Adicionar Header de Autenticação (Authorization: Bearer SEU_TOKEN_JWT)
                  body: formData,
+                 // TODO: Adicionar Header de Autenticação se necessário
             });
-             console.log("Resposta do upload recebida, status:", response.status);
-
-            if (!response.ok) {
-                 const errorText = await response.text();
-                 console.error("Erro no upload (resposta backend):", errorText);
-                 throw new Error(errorText || `Falha no upload da imagem (Status: ${response.status}).`);
+            console.log("Resposta media-service:", mediaResponse.status);
+    
+            if (!mediaResponse.ok) {
+                 const errorText = await mediaResponse.text();
+                 throw new Error(`Falha no upload (Media Service): ${errorText || mediaResponse.status}`);
             }
-
-            const result = await response.json();
-            // Espera-se que o backend retorne algo como { imageUrl: "url_completa_da_imagem_no_storage" }
-            const newImageUrl = result?.imageUrl; // Usar optional chaining '?'
-            console.log("URL da nova imagem:", newImageUrl);
-
-            if (!newImageUrl || typeof newImageUrl !== 'string') {
-                 throw new Error("URL da imagem inválida ou não retornada pelo servidor.");
+    
+            const result = await mediaResponse.json();
+            fileIdentifier = result?.fileName || result?.relativeUrl;
+    
+            if (!fileIdentifier) {
+                 throw new Error("Identificador do arquivo não retornado pelo serviço de mídia.");
             }
-
-            updateUserProfilePicture(newImageUrl);
-            setSelectedFile(null);
-            const fileInput = document.getElementById('picture') as HTMLInputElement;
-            if(fileInput) fileInput.value = '';
-
+            console.log("Arquivo enviado, identificador:", fileIdentifier);
+    
+            console.log("Enviando identificador para user-service...");
+            const userUpdateResponse = await fetch(`http://localhost:8083/api/users/${user.id}/profile-image-url`, { // <<< URL DO USER SERVICE
+                method: 'PATCH', // Ou PUT
+                headers: {
+                    'Content-Type': 'application/json',
+                    // TODO: Adicionar Header de Autenticação
+                },
+                // Envia um JSON simples com a informação retornada pelo media-service
+                body: JSON.stringify({ imageUrl: fileIdentifier }) // Envia o nome/url relativa
+            });
+             console.log("Resposta user-service:", userUpdateResponse.status);
+    
+            if (!userUpdateResponse.ok) {
+                 const errorText = await userUpdateResponse.text();
+                 throw new Error(`Falha ao salvar URL no perfil (User Service): ${errorText || userUpdateResponse.status}`);
+            }
+    
+             // Se chegou aqui, ambas as chamadas deram certo!
+             // --- ETAPA 3: Atualizar o Estado Local ---
+             // Constrói a URL completa para exibição (ajuste se necessário)
+             // Se o media-service retornar uma URL absoluta, use-a diretamente.
+             // Se retornar só o nome, você precisa saber a URL base para servir as imagens.
+             // Assumindo que /media/profile-pictures/{filename} será a URL para ver a imagem:
+             const fullImageUrl = `http://localhost:8084/api/media/profile-pictures/${fileIdentifier}`; // <<< Exemplo! Ajuste conforme sua URL de servir arquivos
+    
+             updateUserProfilePicture(fullImageUrl); // Atualiza o contexto
+             setSelectedFile(null);
+             const fileInput = document.getElementById('picture') as HTMLInputElement;
+             if(fileInput) fileInput.value = '';
+             alert('Foto de perfil atualizada com sucesso!');
+    
+    
         } catch (error: any) {
-             console.error("Erro durante o upload:", error);
+             console.error("Erro durante o processo de upload:", error);
              setUploadError(error.message || 'Erro desconhecido durante o upload.');
         } finally {
             setIsUploading(false);
         }
     };
+    
 
     return (
         <div className="space-y-4 border p-4 rounded-md bg-slate-50">
