@@ -3,13 +3,13 @@
 import Link from "next/link";
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Button } from "../../components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../components/ui/card";
+import { Input } from "../../components/ui/input";
+import { Label } from "../../components/ui/label";
+import { Alert, AlertDescription, AlertTitle } from "../../components/ui/alert";
 import { Loader2 } from "lucide-react";
-import { registerUser } from '@/src/services/authService';
+import { registerUser } from '../../src/services/authService';
 
 export default function CadastroPage() {
   const router = useRouter();

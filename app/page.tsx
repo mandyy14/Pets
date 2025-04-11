@@ -1,7 +1,6 @@
 import ImageDog from "@/app/assets/dog.webp";
-import { Navbar } from "@/components/navbar";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+import { Button } from "../components/ui/button";
+import { Card } from "../components/ui/card";
 import { Heart } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -9,7 +8,6 @@ import Link from "next/link";
 export default function Home() {
   return (
     <main className="min-h-screen bg-white">
-      <Navbar />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
         <nav className="flex" aria-label="Breadcrumb">
           <ol className="flex items-center space-x-2">
