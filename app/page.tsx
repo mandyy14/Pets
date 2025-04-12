@@ -1,4 +1,4 @@
-import ImageDog from "@/app/assets/dog.webp";
+import ImageDog from "../app/assets/dog.webp";
 import { Button } from "../components/ui/button";
 import { Card } from "../components/ui/card";
 import { Heart } from "lucide-react";
