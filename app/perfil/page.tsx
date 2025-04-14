@@ -41,7 +41,7 @@ const maskAddress = (address: string | null | undefined): string => {
 
 
 function ProfilePictureUpload() {
-    const { user, updateUserProfilePicture } = useAuth();
+    const { user, refreshProfilePicVersion } = useAuth();
     const [isUploading, setIsUploading] = useState(false);
     const [uploadError, setUploadError] = useState<string | null>(null);
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -80,7 +80,6 @@ function ProfilePictureUpload() {
 
         setIsUploading(true);
         setUploadError(null);
-        let fileIdentifier: string | null = null;
         console.log("Iniciando upload para usuário ID:", user.id);
 
         const formData = new FormData();
@@ -88,7 +87,7 @@ function ProfilePictureUpload() {
 
         try {
             console.log("Enviando para media-service...");
-            const mediaResponse = await fetch('http://localhost:8084/api/media/upload/profile-picture', {
+            const mediaResponse = await fetch(`http://localhost:8084/api/media/upload/profile-picture/${user.id}`, {
                  method: 'POST',
                  body: formData,
                  // TODO: Adicionar Header de Autenticação se necessário

@@ -12,12 +12,11 @@ interface User {
     id: number;
     nome: string;
     cpf: string;
-    celular: string;
-    endereco: string;
+    celular: string | null;
+    endereco: string | null;
     login: string;
     email: string;
     cargo: string;
-    profileImageUrl?: string | null;
 }
 
 interface AuthContextType {
@@ -25,7 +24,8 @@ interface AuthContextType {
     isLoading: boolean;
     login: (userData: User) => void;
     logout: () => void;
-    updateUserProfilePicture: (imageUrl: string) => void;
+    profilePicVersion: number;
+    refreshProfilePicVersion: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -33,65 +33,50 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const [user, setUser] = useState<User | null>(null);
     const [isLoading, setIsLoading] = useState(true);
+    const [profilePicVersion, setProfilePicVersion] = useState(0); // Inicia em 0
 
     useEffect(() => {
-        console.log("AuthProvider: useEffect running - checking localStorage"); // Log de Debug
+        console.log("AuthProvider: useEffect running - checking localStorage");
         try {
             const storedUser = localStorage.getItem('authUser');
-            console.log("AuthProvider: storedUser from localStorage:", storedUser); // Log de Debug
+            console.log("AuthProvider: storedUser from localStorage:", storedUser);
             if (storedUser && storedUser !== 'undefined') {
-                setUser(JSON.parse(storedUser));
-                console.log("AuthProvider: User loaded from localStorage"); // Log de Debug
+                const parsedUser = JSON.parse(storedUser) as User;
+                delete (parsedUser as any).profileImageUrl;
+                delete (parsedUser as any).updateUserProfilePicture;
+                delete (parsedUser as any).refreshProfilePicVersion;
+                setUser(parsedUser);
+                console.log("AuthProvider: User loaded from localStorage");
             } else {
-                console.log("AuthProvider: No valid user in localStorage"); // Log de Debug
+                console.log("AuthProvider: No valid user in localStorage");
             }
         } catch (error) {
             console.error("AuthContext: Failed to parse user from localStorage", error);
             localStorage.removeItem('authUser');
         } finally {
             setIsLoading(false);
-            console.log("AuthProvider: Initial loading finished. isLoading:", false); // Log de Debug
+            console.log("AuthProvider: Initial loading finished. isLoading:", false);
         }
     }, []);
 
     const login = (userData: User) => {
         console.log("AuthProvider: login function called with:", userData);
-        setUser(userData);
-        try {
-            localStorage.setItem('authUser', JSON.stringify(userData));
-            console.log("AuthProvider: User saved to localStorage"); // Log de Debug
-        } catch (error) {
-            console.error("AuthContext: Failed to save user to localStorage", error);
-        }
+         const { profileImageUrl, ...userToStore } = userData as any;
+        setUser(userToStore);
+        localStorage.setItem('authUser', JSON.stringify(userToStore));
+        setProfilePicVersion(v => v + 1);
     };
 
     const logout = () => {
-        console.log("AuthProvider: logout function called"); // Log de Debug
+        console.log("AuthProvider: logout function called");
         setUser(null);
-        try {
-            localStorage.removeItem('authUser');
-            console.log("AuthProvider: User removed from localStorage"); // Log de Debug
-        } catch (error) {
-            console.error("AuthContext: Failed to remove user from localStorage", error);
-        }
+        localStorage.removeItem('authUser');
+        setProfilePicVersion(0);
     };
 
-    const updateUserProfilePicture = (imageUrl: string) => {
-         console.log("AuthProvider: updateUserProfilePicture called with:", imageUrl); // Log de Debug
-        setUser(currentUser => {
-            if (!currentUser) {
-                console.log("AuthProvider: updateUserProfilePicture - no current user, returning null"); // Log de Debug
-                 return null;
-            }
-            const updatedUser = { ...currentUser, profileImageUrl: imageUrl };
-            try {
-                localStorage.setItem('authUser', JSON.stringify(updatedUser));
-                 console.log("AuthProvider: Updated user picture saved to localStorage"); // Log de Debug
-            } catch (error) {
-                console.error("AuthContext: Failed to update profile picture in localStorage", error);
-            }
-            return updatedUser;
-        });
+    const refreshProfilePicVersion = () => {
+        console.log("AuthProvider: refreshProfilePicVersion called");
+        setProfilePicVersion(v => v + 1);
     };
 
     const contextValue: AuthContextType = {
@@ -99,10 +84,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         isLoading,
         login,
         logout,
-        updateUserProfilePicture
+        profilePicVersion,
+        refreshProfilePicVersion
     };
 
-    console.log("AuthProvider: Rendering Provider. User:", user, "isLoading:", isLoading); // Log de Debug
+    console.log("AuthProvider: Rendering Provider. User:", user?.id, "isLoading:", isLoading, "PicVersion:", profilePicVersion);
 
     return (
         <AuthContext.Provider value={contextValue}>
@@ -112,9 +98,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 };
 
 export const useAuth = (): AuthContextType => {
-    const context = useContext(AuthContext);
-    if (context === undefined) {
-        throw new Error('useAuth deve ser usado dentro de um AuthProvider');
-    }
+     const context = useContext(AuthContext);
+    if (context === undefined) { throw new Error('useAuth must be used within an AuthProvider'); }
     return context;
 };
