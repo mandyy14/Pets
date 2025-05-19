@@ -1,8 +1,14 @@
 export interface Pet {
-    id: number;
-    nome: string;
-    especie: string;
-    endereco: string;
-    proprietario: string; // ou “dono”, conforme seu DTO
-    imagemUrl: string;    // ajustar conforme campo real
+  id: number;
+  nome: string;
+  especie: string;
+  raca: string;
+  idade: number;
+  genero: string;
+  porte: string;
+  descricao: string;
+  cidade: string;
+  estado: string;
+  adotado: boolean;
+  mediaIdentifier: string; // nome da imagem
 }

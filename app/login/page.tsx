@@ -35,6 +35,9 @@ export default function LoginPage() {
     try {
       const { user, token } = await loginUser(credentials);
 
+      localStorage.setItem("token", token);
+      localStorage.setItem("user", JSON.stringify(user));
+
       login(user, token);
 
       router.push("/");

@@ -6,7 +6,6 @@ import {
   Loader2,
   LogOut,
   PawPrint,
-  Search,
   User as UserIcon,
 } from "lucide-react";
 import Image from "next/image";
@@ -99,14 +98,14 @@ export function Navbar() {
           {/* Busca e Menu Usuário */}
           <div className="flex items-center space-x-4">
             {/* Busca */}
-            <div className="relative hidden sm:block">
+            {/* <div className="relative hidden sm:block">
               <input
                 type="text"
                 placeholder="Pesquisar..."
                 className="w-64 pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-1 focus:ring-amber-500 text-sm"
               />
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-            </div>
+            </div> */}
 
             {/* Dropdown */}
             <DropdownMenu>
