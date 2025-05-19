@@ -46,7 +46,7 @@ function Favoritos() {
       params.append("size", "4");
 
       const res = await fetch(
-        `http://localhost:8082/api/pets/disponiveis?${params.toString()}`
+        `http://localhost:8080/api/pets/disponiveis?${params.toString()}`
       );
       const page = await res.json();
       setPets(page.content || []);
