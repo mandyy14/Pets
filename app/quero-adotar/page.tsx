@@ -130,7 +130,14 @@ function QueroAdotar() {
                     {pet.cidade} - {pet.estado}
                   </p>
                   {/*implementas infos restantes*/}
-                  <Button className="w-full bg-amber-500 hover:bg-amber-600 text-white">
+                  <Button
+                    className="w-full bg-amber-500 hover:bg-amber-600 text-white"
+                    onClick={() =>
+                      alert(
+                        "Mais informações sobre adoção foram enviadas para o seu e-mail."
+                      )
+                    }
+                  >
                     Quero Adotar
                   </Button>
                 </div>
