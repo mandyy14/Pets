@@ -82,7 +82,7 @@ function ProfilePictureUpload() {
     try {
       console.log("Upload: Enviando para media-service...");
       const mediaResponse = await fetch(
-        `http://localhost:8084/api/media/upload/profile-picture/${user.id}`,
+        `http://localhost:8080/api/media/upload/profile-picture/${user.id}`,
         {
           method: "POST",
           body: formData,
@@ -93,8 +93,7 @@ function ProfilePictureUpload() {
       if (!mediaResponse.ok) {
         const errorText = await mediaResponse.text();
         throw new Error(
-          `Falha no upload (Media Service): ${
-            errorText || mediaResponse.status
+          `Falha no upload (Media Service): ${errorText || mediaResponse.status
           }`
         );
       }

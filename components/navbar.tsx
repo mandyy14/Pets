@@ -27,6 +27,7 @@ export function Navbar() {
   const [navbarPicUrl, setNavbarPicUrl] = useState<string | null>(null);
   const [isPicLoading, setIsPicLoading] = useState(false);
   const router = useRouter();
+
   const handleLogout = () => {
     logout();
   };
@@ -34,9 +35,6 @@ export function Navbar() {
   useEffect(() => {
     if (user?.id && !isLoading) {
       setIsPicLoading(true);
-      console.log(
-        `Navbar: Buscando URL da foto para user ${user.id} (versão ${profilePicVersion})`
-      );
       fetch(`http://localhost:8080/api/users/${user.id}/profile-picture-url`)
         .then((res) => {
           if (res.ok) return res.json();
@@ -45,7 +43,6 @@ export function Navbar() {
           return Promise.resolve({ imageUrl: null });
         })
         .then((data) => {
-          console.log(`Navbar: URL recebida: ${data?.imageUrl}`);
           setNavbarPicUrl(data?.imageUrl || null);
         })
         .catch((error) => {
@@ -74,40 +71,35 @@ export function Navbar() {
                   href="/"
                   className="text-gray-700 hover:text-amber-600 px-3 py-2 rounded-md text-sm font-medium"
                 >
-                  {" "}
-                  Home{" "}
+                  Home
                 </Link>
                 <Link
                   href="/quero-adotar"
                   className="text-gray-700 hover:text-amber-600 px-3 py-2 rounded-md text-sm font-medium"
                 >
-                  {" "}
-                  Quero adotar{" "}
+                  Quero adotar
                 </Link>
                 <Link
                   href="/faq"
                   className="text-gray-700 hover:text-amber-600 px-3 py-2 rounded-md text-sm font-medium"
                 >
-                  {" "}
-                  FAQ{" "}
+                  FAQ
                 </Link>
+                {/* Apenas para ADMIN */}
+                {user?.cargo === "admin" && (
+                  <Link
+                    href="/adm/cadastrar-pet"
+                    className="text-gray-700 hover:text-amber-600 px-3 py-2 rounded-md text-sm font-medium"
+                  >
+                    Cadastrar Pet
+                  </Link>
+                )}
               </div>
             </div>
           </div>
 
-          {/* Busca e Menu Usuário */}
+          {/* Menu do usuário */}
           <div className="flex items-center space-x-4">
-            {/* Busca */}
-            {/* <div className="relative hidden sm:block">
-              <input
-                type="text"
-                placeholder="Pesquisar..."
-                className="w-64 pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-1 focus:ring-amber-500 text-sm"
-              />
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-            </div> */}
-
-            {/* Dropdown */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
